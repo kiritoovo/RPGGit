@@ -23,6 +23,6 @@ MonoBehaviour:
   animatorOverride: {fileID: 0}
   weaponDamage: 5
   weaponDamageBonus: 0
-  weaponRange: 1
+  weaponRange: 2
   isRight: 1
   projectile: {fileID: 0}

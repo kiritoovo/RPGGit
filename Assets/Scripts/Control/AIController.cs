@@ -19,8 +19,8 @@ namespace RPG.Core{
         [SerializeField] float waypointTolerance=0.3f;
         [SerializeField] float patrolSpeedFraction=0.3f;
         [SerializeField]float shoutDistance=5f;
-        float lastSeeTime;
-        float aggravateTime=Mathf.Infinity;
+        [SerializeField]float lastSeeTime;
+        [SerializeField]float aggravateTime=Mathf.Infinity;
         GameObject player;
         Health health;
         Fighter fighter;
@@ -106,8 +106,8 @@ namespace RPG.Core{
 
         void AttackBehaviour()
         {
-            AggrevateNear();
             lastSeeTime =0;
+            AggrevateNear();
             GetComponent<Fighter>().Fight(player);
         }
 

@@ -56,6 +56,9 @@ namespace RPG.Combat
         {
             if(currentWeaponConfig==null)
             AttachWeapon(defaultWeapon);
+            else{
+                AttachWeapon(currentWeaponConfig);
+            }
         }
 
         private void Update()
@@ -130,14 +133,17 @@ namespace RPG.Combat
 
         private bool GetIsInRange(Transform targetTransform)
         {
-
-            return Vector3.Distance(transform.position, targetTransform.position) < currentWeaponConfig.GetRange();
+            return Vector3.Distance(transform.position, targetTransform.position) <= currentWeaponConfig.GetRange();
         }
 
         public bool CanAttack(GameObject combatTarget)
         {
             if (combatTarget == null) { return false; }
-            if (!GetComponent<Mover>().CanMoveTo(combatTarget.transform.position)&&!GetIsInRange(combatTarget.transform)) return false;
+            if (!GetComponent<Mover>().CanMoveTo(combatTarget.transform.position) &&
+                !GetIsInRange(combatTarget.transform))
+            {
+                return false;
+            }
             Health targetToTest = combatTarget.GetComponent<Health>();
             return targetToTest != null && !targetToTest.IsDead();
         }
