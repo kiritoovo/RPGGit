@@ -1,5 +1,5 @@
 using System;
-using GameDevTV.Utils;
+using RPG.Utils;
 using RPG.Core;
 using RPG.Saving;
 using RPG.Stats;
@@ -15,6 +15,7 @@ namespace RPG.Attribute{
 
         [System.Serializable]
         public class TakeDamageEvent:UnityEvent<float>{}
+        public UnityEvent OnDie;
 
         private void Awake() {
             currentHealth=new LazyValue<float>(GetInitialHealth);
@@ -40,7 +41,7 @@ namespace RPG.Attribute{
             GetComponent<BaseStats>().OnLevelUp -= UpdateHealth;
         }
 
-        private void UpdateHealth()
+        public void UpdateHealth()
         {
             currentHealth.value=GetHealthPercentage()/100* GetComponent<BaseStats>().GetStat(Stat.Health);
             maxHealth= GetComponent<BaseStats>().GetStat(Stat.Health);
@@ -58,6 +59,7 @@ namespace RPG.Attribute{
             currentHealth.value=Math.Max((float)currentHealth.value-damage,0);
             onTakeDamage.Invoke(damage);
             if (currentHealth.value==0){
+                OnDie.Invoke();
                 Die();
                 AwardExperience(attacker);
             }
@@ -102,7 +104,7 @@ namespace RPG.Attribute{
 
         
 
-        public object CaptrueState()
+        public object CaptureState()
         {
            return currentHealth.value;
         }

@@ -1,0 +1,46 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using RPG.Stats;
+using UnityEngine;
+
+namespace RPG.Inventories{
+    [CreateAssetMenu(menuName =("RPG/Inventory/Equipalbe Item"))]
+    public class StatsEquipableItem : EquipableItem,IModifierProvider
+{
+    [SerializeField]
+    Modifier[] addtiveModifiers;
+    [SerializeField]
+    Modifier[] percentageModifiers;
+
+        public IEnumerable<float> GetAdditiveModifier(Stat stat)
+        {
+            foreach(var modifier in addtiveModifiers)
+            {
+                if(modifier.stat==stat)
+                {
+                    yield return modifier.value;
+                }
+            }
+        }
+
+        public IEnumerable<float> GetPercentageModifier(Stat stat)
+        {
+            foreach (var modifier in percentageModifiers)
+            {
+                if (modifier.stat == stat)
+                {
+                    yield return modifier.value;
+                }
+            }
+        }
+
+        [Serializable]
+    struct Modifier{
+        public Stat stat;
+        public float value;
+    }
+
+}
+}
+

@@ -1,87 +1,111 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using RPG.Core;
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.AI;
 
-namespace RPG.Saving{
+namespace RPG.Saving
+{
+    /// <summary>
+    /// To be placed on any GameObject that has ISaveable components that
+    /// require saving.
+    ///
+    /// This class gives the GameObject a unique ID in the scene file. The ID is
+    /// used for saving and restoring the state related to this GameObject. This
+    /// ID can be manually override to link GameObjects between scenes (such as
+    /// recurring characters, the player or a score board). Take care not to set
+    /// this in a prefab unless you want to link all instances between scenes.
+    /// </summary>
     [ExecuteAlways]
     public class SaveableEntity : MonoBehaviour
     {
-        
-       [SerializeField] string uniqueIdentifier="" ;
-        static Dictionary<String,SaveableEntity> globalDic=new Dictionary<string, SaveableEntity>();
+        // CONFIG DATA
+        [Tooltip("The unique ID is automatically generated in a scene file if " +
+        "left empty. Do not set in a prefab unless you want all instances to " +
+        "be linked.")]
+        [SerializeField] string uniqueIdentifier = "";
+
+        // CACHED STATE
+        static Dictionary<string, SaveableEntity> globalLookup = new Dictionary<string, SaveableEntity>();
 
         public string GetUniqueIdentifier()
         {
             return uniqueIdentifier;
         }
 
-        public object CaptrueState()
+        /// <summary>
+        /// Will capture the state of all `ISaveables` on this component and
+        /// return a `System.Serializable` object that can restore this state
+        /// later.
+        /// </summary>
+        public object CaptureState()
         {
-            Dictionary<string,object> state=new Dictionary<string, object>();
-            foreach(ISaveable saveable in GetComponents<ISaveable>())
+            Dictionary<string, object> state = new Dictionary<string, object>();
+            foreach (ISaveable saveable in GetComponents<ISaveable>())
             {
-                state[saveable.GetType().ToString()]=saveable.CaptrueState();
+                state[saveable.GetType().ToString()] = saveable.CaptureState();
             }
             return state;
-            // SerializeVector3 vector3=new SerializeVector3(gameObject.transform.position);
-            // return vector3;
         }
 
+        /// <summary>
+        /// Will restore the state that was captured by `CaptureState`.
+        /// </summary>
+        /// <param name="state">
+        /// The same object that was returned by `CaptureState`.
+        /// </param>
         public void RestoreState(object state)
         {
-            Dictionary<string,object> stateDic=(Dictionary<string,object>)state;
-            foreach(ISaveable saveable in GetComponents<ISaveable>())
+            Dictionary<string, object> stateDict = (Dictionary<string, object>)state;
+            foreach (ISaveable saveable in GetComponents<ISaveable>())
             {
-                string type=saveable.GetType().ToString();
-                if(stateDic.ContainsKey(type))
+                string typeString = saveable.GetType().ToString();
+                if (stateDict.ContainsKey(typeString))
                 {
-                    saveable.RestoreState(stateDic[type]);
+                    saveable.RestoreState(stateDict[typeString]);
                 }
             }
-            // SerializeVector3 vector3=(SerializeVector3)state;
-            // GetComponent<NavMeshAgent>().enabled=false;
-            // gameObject.transform.position=vector3.ToVector();
-            // GetComponent<NavMeshAgent>().enabled=true;
-            // GetComponent<ActionSchedule>().StopLastAction();
         }
-        
+
+        // PRIVATE
+
 #if UNITY_EDITOR
         private void Update()
         {
             if (Application.IsPlaying(gameObject)) return;
             if (string.IsNullOrEmpty(gameObject.scene.path)) return;
+
             SerializedObject serializedObject = new SerializedObject(this);
             SerializedProperty property = serializedObject.FindProperty("uniqueIdentifier");
 
-            if (string.IsNullOrEmpty(property.stringValue)||!IsUnique(property.stringValue))
+            if (string.IsNullOrEmpty(property.stringValue) || !IsUnique(property.stringValue))
             {
                 property.stringValue = System.Guid.NewGuid().ToString();
                 serializedObject.ApplyModifiedProperties();
             }
-            globalDic[property.stringValue]=this;
+
+            globalLookup[property.stringValue] = this;
         }
 #endif
 
-        private bool IsUnique(string stringValue)
+        private bool IsUnique(string candidate)
         {
-            if(!globalDic.ContainsKey(stringValue))return true;
-            if(globalDic[stringValue]==this)return true;
-            if(globalDic[stringValue]==null){
-                globalDic.Remove(stringValue);
-                return true;
-            }
-            if(globalDic[stringValue].GetUniqueIdentifier()!=stringValue)
+            if (!globalLookup.ContainsKey(candidate)) return true;
+
+            if (globalLookup[candidate] == this) return true;
+
+            if (globalLookup[candidate] == null)
             {
-                globalDic.Remove(stringValue);
+                globalLookup.Remove(candidate);
                 return true;
             }
-           return false;
+
+            if (globalLookup[candidate].GetUniqueIdentifier() != candidate)
+            {
+                globalLookup.Remove(candidate);
+                return true;
+            }
+
+            return false;
         }
     }
 }
-
-

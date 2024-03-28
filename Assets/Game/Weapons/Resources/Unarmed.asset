@@ -12,6 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 017ab35bef565654fa0961b099d319eb, type: 3}
   m_Name: Unarmed
   m_EditorClassIdentifier: 
+  itemID: b876c579-1553-4cb7-a05d-ffad687799c7
+  displayName: "\u9ED8\u8BA4"
+  description: 
+  icon: {fileID: 0}
+  pickup: {fileID: 0}
+  stackable: 0
+  allowedEquipLocation: 5
   weaponPrefeb: {fileID: 2565851153981082731, guid: bb6daf11d3f2a6e46abc15038382b6d4, type: 3}
   animatorOverride: {fileID: 0}
   weaponDamage: 5

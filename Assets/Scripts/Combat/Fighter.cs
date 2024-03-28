@@ -4,9 +4,10 @@ using RPG.Core;
 using RPG.Saving;
 using RPG.Stats;
 using System.Collections.Generic;
-using GameDevTV.Utils;
+using RPG.Utils;
 using System;
 using RPG.Attribute;
+using RPG.Inventories;
 
 namespace RPG.Combat
 {
@@ -21,11 +22,29 @@ namespace RPG.Combat
         float timeSinceLastAttack = Mathf.Infinity;
         WeaponConfig currentWeaponConfig;
         LazyValue<Weapon> currentWeapon;
+        Equipment equipment;
 
         private void Awake()
         {
             currentWeaponConfig = defaultWeapon;
             currentWeapon=new LazyValue<Weapon>(SetupDefaultWeapon);
+            equipment=GetComponent<Equipment>();
+            if(equipment)
+            {
+                equipment.equipmentUpdated+=UpdateWeapon;
+            }
+        }
+
+        private void UpdateWeapon()
+        {
+           var weapon= equipment.GetItemInSlot(EquipLocation.Weapon) as WeaponConfig;
+           if(weapon==null  )
+           {
+            EquipWeapon(defaultWeapon);
+           }
+           else{
+            EquipWeapon(weapon);
+           }
         }
 
         private Weapon SetupDefaultWeapon()
@@ -35,6 +54,7 @@ namespace RPG.Combat
 
         private void Start()
         {
+            if(currentWeaponConfig==null)
             AttachWeapon(defaultWeapon);
         }
 
@@ -157,7 +177,7 @@ namespace RPG.Combat
             }
         }
 
-        public object CaptrueState()
+        public object CaptureState()
         {
             return currentWeaponConfig.name;
         }

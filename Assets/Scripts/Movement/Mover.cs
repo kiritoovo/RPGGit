@@ -78,7 +78,7 @@ namespace RPG.Movement
             GetComponent<Animator>().SetFloat("forwardSpeed", localVelocity.z);
         }
 
-        public object CaptrueState()
+        public object CaptureState()
         {
             SerializeVector3 vector3=new SerializeVector3(gameObject.transform.position);
             return vector3;

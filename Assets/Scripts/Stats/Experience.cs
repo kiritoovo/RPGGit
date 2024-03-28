@@ -19,7 +19,7 @@ namespace RPG.Stats{
             return experience;
         }
 
-        public object CaptrueState()
+        public object CaptureState()
         {
             return experience;   
         }        

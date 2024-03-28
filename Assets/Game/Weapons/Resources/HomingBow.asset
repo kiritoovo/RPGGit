@@ -12,6 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 017ab35bef565654fa0961b099d319eb, type: 3}
   m_Name: HomingBow
   m_EditorClassIdentifier: 
+  itemID: f01e70a3-cc99-434e-aebb-7b7d3a617524
+  displayName: "\u8FFD\u8E2A\u5F13"
+  description: 
+  icon: {fileID: 21300000, guid: 4db017495c69e8140a56a0e2b669e3f8, type: 3}
+  pickup: {fileID: 1074222074010637738, guid: b403106107961bb45bea66d333eeb2e4, type: 3}
+  stackable: 0
+  allowedEquipLocation: 5
   weaponPrefeb: {fileID: 330676812496057144, guid: 7a10d051d6bb70a4eb31045db7cd879e, type: 3}
   animatorOverride: {fileID: 22100000, guid: f6e80f0102d94804dab20b801da39ada, type: 2}
   weaponDamage: 8
